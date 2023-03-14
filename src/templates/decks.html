@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Decks</h3>
+    <div class="box">
+
+    {% if decks|length == 0 %}
+        <h3>No decks</h3>
+    {% else %}
+        {% for deck in decks %}
+        <div class="columns is-vcentered is-mobile">
+            <div class="column is-flex is-justify-content-left">
+                {{ deck.name }}
+            </div>
+            <div class="column is-flex is-align-items-center" style="justify-content: right">
+                <a href="/decks/{{ deck.id }}"
+                   class="button is-small is-primary">
+                    Open
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+    </div>
+</div>
+
+<a class="button" href="/new-deck">
+    New Deck
+</a>
+
+{% endblock %}
+
