@@ -1,8 +1,12 @@
-from flask import Flask, render_template
+from flask import Blueprint, render_template, request
+from flask_login import current_user, login_required
+from . import db
+from . import models
 
-app = Flask(__name__)
+main = Blueprint('main', __name__)
 
-@app.route("/hello")
-def hello_world():
-    return render_template('hello.html')
+@main.route('/')
+@login_required
+def index():
+    return render_template('index.html')
 
