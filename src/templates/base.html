@@ -16,12 +16,12 @@
                     <div class="container">
                         <div id="navbarMenuHeroA" class="navbar-menu">
                             <div class="navbar-end">
-                                <a href="{{ url_for('main.index') }}" class="navbar-item">
-                                    Home
-                                </a>
                                 {% if current_user.is_authenticated %}
                                 <a href="{{ url_for('main.decks') }}" class="navbar-item">
                                     Decks
+                                </a>
+                                <a href="{{ url_for('auth.logout') }}" class="navbar-item">
+                                    Log Out
                                 </a>
                                 {% endif %}
                                 {% if not current_user.is_authenticated %}
@@ -30,11 +30,6 @@
                                 </a>
                                 <a href="{{ url_for('auth.signup') }}" class="navbar-item">
                                     Sign Up
-                                </a>
-                                {% endif %}
-                                {% if current_user.is_authenticated %}
-                                <a href="{{ url_for('auth.logout') }}" class="navbar-item">
-                                    Log Out
                                 </a>
                                 {% endif %}
                             </div>
