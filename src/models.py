@@ -14,7 +14,9 @@ class Deck(db.Model):
 
 class Card(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    deck_id = db.Column(db.Integer, db.ForeignKey('deck.id'), nullable=False)
     front = db.Column(db.UnicodeText)
     back = db.Column(db.UnicodeText)
     due = db.Column(db.DateTime)
+    interval = db.Column(db.Integer, nullable=False)
 

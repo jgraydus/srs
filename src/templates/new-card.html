@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+
+    <div class="level">
+        <div class="level-left">
+            {{ deck.name }} | New Card
+        </div>
+        <div class="level-right">
+            <a class="button is-small" href="/decks/{{deck.id}}">Cancel</a>
+        </div>
+    </div>
+
+    <form class="box" method="POST" action="/decks/{{deck.id}}/new-card">
+        <div class="field">
+            <label class="label has-text-left">Front</label>
+            <div class="control">
+                <textarea class="textarea" name="front"></textarea>
+            </div>
+        </div>
+
+        <div class="field">
+            <label class="label has-text-left">Back</label>
+            <div class="control">
+                <textarea class="textarea" name="back"></textarea>
+            </div>
+        </div>
+
+        <button type="submit" class="button is-primary is-small is-fullwidth">Create Card</button>
+    </form>
+
+
+
+</div>
+{% endblock %}
+

@@ -1,7 +1,9 @@
-from flask import Blueprint, flash, redirect, render_template, request, url_for
+from datetime import datetime, timezone
+from flask import abort, Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from . import db
 from . import models
+from .models import Card
 from .models import Deck
 
 main = Blueprint('main', __name__)
@@ -25,8 +27,41 @@ def decks():
 @main.route('/decks/<int:deck_id>')
 @login_required
 def deck(deck_id):
+    owner = current_user.id
+    deck = db.session.execute(db.select(Deck).filter_by(id=deck_id,owner=owner)).scalar()
+
+    if not deck:
+        abort(404)
+
+    card = db.session.execute(db.select(Card).filter_by(deck_id=deck_id)).scalar()
+
     card = None
-    return render_template('deck.html', card=card)
+    return render_template('deck.html', deck=deck, card=card)
+
+@main.route('/decks/<int:deck_id>/new-card')
+@login_required
+def new_card(deck_id):
+    owner = current_user.id
+    deck = db.session.execute(db.select(Deck).filter_by(id=deck_id,owner=owner)).scalar()
+
+    if not deck:
+        abort(404)
+
+    return render_template('new-card.html', deck=deck)
+
+@main.route('/decks/<int:deck_id>/new-card', methods=['POST'])
+@login_required
+def new_card_post(deck_id):
+    front = request.form['front']
+    back = request.form['back']
+
+    now = datetime.now(timezone.utc)
+    card = Card(deck_id=deck_id, front=front, back=back, interval=0, due=now)
+
+    db.session.add(card)
+    db.session.commit()
+
+    return redirect(url_for('main.deck', deck_id=deck_id))
 
 @main.route('/new-deck')
 @login_required
