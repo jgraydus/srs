@@ -41,7 +41,7 @@ def signup_post():
     name = request.form.get('name')
     password = request.form.get('password')
 
-    user = db.session.execute(db.select(User).filter_by(email=email)).scalar_one()
+    user = db.session.execute(db.select(User).filter_by(email=email)).scalar()
 
     if user:
         flash('email address is not available')
