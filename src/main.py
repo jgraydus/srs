@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from flask import abort, Blueprint, flash, redirect, render_template, request, url_for
 from flask_login import current_user, login_required
 from . import db
@@ -28,7 +28,10 @@ def deck(deck_id):
     if not deck:
         abort(404)
 
-    card = db.session.execute(db.select(Card).filter_by(deck_id=deck_id)).scalar()
+    now = datetime.now(timezone.utc)
+    card_query = db.select(Card).filter(Card.deck_id == deck_id, Card.due <= now).order_by(Card.due, Card.id)
+
+    card = db.session.execute(card_query).scalar()
 
     if request.args.get('back'):
         side = 'back'
@@ -46,13 +49,46 @@ def card_post(deck_id, card_id):
     if not deck:
         abort(404)
 
+    card = db.session.execute(db.select(Card).filter_by(id=card_id, deck_id=deck_id)).scalar()
+
+    if not card:
+        abort(404)
+
     command = request.form['command']
+    now = datetime.now(timezone.utc)
 
     if command == 'remembered':
-        print('REMEMBERED')
+        due = card.due
+        interval = card.interval
+        card.interval = interval + 1
+        match interval:
+            case 0:
+                card.due = due + timedelta(hours=2)
+            case 1:
+                card.due = due + timedelta(hours=4)
+            case 2:
+                card.due = due + timedelta(hours=8)
+            case 3:
+                card.due = due + timedelta(hours=16)
+            case 4:
+                card.due = due + timedelta(hours=32)
+            case 5:
+                card.due = due + timedelta(hours=64)
+            case 6:
+                card.due = due + timedelta(hours=128)
+            case 7:
+                card.due = due + timedelta(hours=256)
+            case 8:
+                card.due = due + timedelta(hours=512)
+            case _:
+                card.due = due + timedelta(hours=1024)
 
     if command == 'forgot':
-        print('FORGOT')
+        card.due = now + timedelta(minutes=1)
+        card.interval = 0
+
+    card.last_seen = now
+    db.session.commit()
 
     return redirect(url_for('main.deck', deck_id=deck_id))
 
