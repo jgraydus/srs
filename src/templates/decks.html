@@ -1,14 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-
 <div class="column is-4 is-offset-4">
-    <h3 class="title">Decks</h3>
-    <div class="box">
 
+    <div class="level">
+        <div class="level-left">
+            <div class="title">Decks</div>
+        </div>
+        <div class="level-right">
+            <a class="button is-small" href="/new-deck">New Deck</a>
+        </div>
+    </div>
+
+    <div class="box">
     {% if decks|length == 0 %}
-        <h3>No decks</h3>
+    <h3>No decks</h3>
     {% else %}
         {% for deck in decks %}
         <div class="columns is-vcentered is-mobile">
@@ -24,13 +30,8 @@
         </div>
         {% endfor %}
     {% endif %}
-
     </div>
 </div>
-
-<a class="button" href="/new-deck">
-    New Deck
-</a>
 
 {% endblock %}
 
