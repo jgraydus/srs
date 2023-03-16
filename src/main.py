@@ -16,12 +16,7 @@ def index():
 @main.route('/decks')
 @login_required
 def decks():
-
     decks = db.session.execute(db.select(Deck).filter_by(owner=current_user.id).order_by(Deck.name)).scalars().all()
-
-    print(decks)
-    print(len(decks))
-
     return render_template('decks.html', decks=decks)
 
 @main.route('/decks/<int:deck_id>')
@@ -35,8 +30,31 @@ def deck(deck_id):
 
     card = db.session.execute(db.select(Card).filter_by(deck_id=deck_id)).scalar()
 
-    card = None
-    return render_template('deck.html', deck=deck, card=card)
+    if request.args.get('back'):
+        side = 'back'
+    else:
+        side = 'front'
+
+    return render_template('deck.html', deck=deck, card=card, side=side)
+
+@main.route('/decks/<int:deck_id>/cards/<int:card_id>', methods=['POST'])
+@login_required
+def card_post(deck_id, card_id):
+    owner = current_user.id
+    deck = db.session.execute(db.select(Deck).filter_by(id=deck_id,owner=owner)).scalar()
+
+    if not deck:
+        abort(404)
+
+    command = request.form['command']
+
+    if command == 'remembered':
+        print('REMEMBERED')
+
+    if command == 'forgot':
+        print('FORGOT')
+
+    return redirect(url_for('main.deck', deck_id=deck_id))
 
 @main.route('/decks/<int:deck_id>/new-card')
 @login_required

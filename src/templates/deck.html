@@ -14,9 +14,37 @@
 
     <div class="box">
     {% if not card %}
-    There are no cards due.
+        <div class="block">There are no cards due.</div>
     {% else %}
 
+        {% if side == "front" %}
+            <div class="block has-text-left">
+                {{ card.front }}
+            </div>
+            <div class="block">
+                <a class="button is-primary is-small" href="/decks/{{deck.id}}?back=1">Flip</a>
+            </div>
+        {% else %}
+            <div class="block has-text-left">
+                {{ card.front }}
+                <hr class="hr">
+                {{ card.back }}
+            </div>
+            <div class="block is-flex" style="flex-direction: row; justify-content: center">
+                <form method="POST" action="/decks/{{deck.id}}/cards/{{card.id}}">
+                    <input type="hidden" name="command" value="remembered">
+                    <button type="submit" class="button is-success is-small" style="margin-right: 10px">
+                        Remembered
+                    </button>
+                </form>
+                <form method="POST" action="/decks/{{deck.id}}/cards/{{card.id}}">
+                    <input type="hidden" name="command" value="forgot">
+                    <button type="submit" class="button is-danger is-small">
+                        Forgot
+                    </button>
+                </form>
+            </div>
+        {% endif %}
 
     {% endif %}
     </div>
